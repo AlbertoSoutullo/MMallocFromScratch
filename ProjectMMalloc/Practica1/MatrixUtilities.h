@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <intrin.h>
+#include "..\libMMalloc\mmalloc.h"
 
 #ifndef _CREATE_MATRIX_H_
 #define _CREATE_MATRIX_H_

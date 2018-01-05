@@ -11,15 +11,28 @@
 Matrix_t* createMatrix(int rowNum, int colNum)
 {
 	Matrix_t* newMatrix;
-	newMatrix		  = (Matrix_t*)malloc(sizeof(Matrix_t));
+	newMatrix		  = (Matrix_t*)mmalloc(sizeof(Matrix_t));
+	if (newMatrix == NULL)
+	{
+		return NULL;
+	}
 	newMatrix->colNum = colNum;
 	newMatrix->rowNum = rowNum;
-	newMatrix->data   = (float**)malloc(sizeof(float*)*rowNum);
+	newMatrix->data   = (float**)mmalloc(sizeof(float*)*rowNum);
+	if (newMatrix->data == NULL)
+	{
+		return NULL;
+	}
 
 	int i = 0;
 	for (i = 0; i < rowNum; i++)
 	{
-		newMatrix->data[i] = (float*)malloc(sizeof(float)*colNum);
+		newMatrix->data[i] = (float*)mmalloc(sizeof(float)*colNum);
+		if (newMatrix->data[i] == NULL)
+		{
+			return NULL;
+		}
+
 	}
 
 	return newMatrix;
@@ -31,7 +44,7 @@ int readMatrix(char* fileName, Matrix_t** m1, int transpose)
 	int rowNum = 0;
 	int colNum = 0;
 
-	f1 = fopen(fileName, "r"); 
+	fopen_s(&f1, fileName, "r"); 
 
 	if (f1 == NULL)
 	{
@@ -46,6 +59,11 @@ int readMatrix(char* fileName, Matrix_t** m1, int transpose)
 		if (transpose)
 		{
 			(*m1) = createMatrix(colNum, rowNum);
+			if (m1 == NULL)
+			{
+				printf("Not enough space. \n");
+				return 2;
+			}
 			int i = 0;
 			for (i = 0; i < (*m1)->colNum; i++)
 			{
@@ -59,6 +77,11 @@ int readMatrix(char* fileName, Matrix_t** m1, int transpose)
 		else
 		{
 			(*m1) = createMatrix(rowNum, colNum);
+			if (m1 == NULL)
+			{
+				printf("Not enough space. \n");
+				return 2;
+			}
 			int i = 0;
 			for (i = 0; i < (*m1)->rowNum; i++)
 			{
@@ -74,7 +97,7 @@ void writeMatrix(char* fileName, Matrix_t* m1, int transpose)
 {
 	FILE* f1 = NULL;
 
-	f1 = fopen(fileName, "w"); 
+	fopen_s(&f1, fileName, "w"); 
 
 	if (f1 == NULL)
 	{
@@ -116,13 +139,18 @@ void createAndFillMatrix(Matrix_t** matrix, int rows, int cols, float value)
 
 	(*matrix) = createMatrix(rows, cols);
 
-	for (i = 0; i < (*matrix)->rowNum; i++)
+	if (matrix != NULL)
 	{
-		for (j = 0; j < (*matrix)->colNum; j++)
+		for (i = 0; i < (*matrix)->rowNum; i++)
 		{
-			(*matrix)->data[i][j] = value;
+			for (j = 0; j < (*matrix)->colNum; j++)
+			{
+				(*matrix)->data[i][j] = value;
+			}
 		}
 	}
+
+	
 }
 
 void printMatrix(Matrix_t* matrix)

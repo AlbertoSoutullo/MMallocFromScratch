@@ -37,9 +37,47 @@ void init_mmalloc(void* ptr_ram, size_t size)
 void* mmalloc(size_t size)
 {
 	//tamaño libre? tenemos que mirar si hay ram libre suficiente
+	nodo_t* nodoMover = NULL;
+	//si tenemos espacio para un nodo creamos el nodo y comprobamos si hay libres
+	if (ram->nodosLibres->size > 0)
+	{
+		nodo_t* nodoAux   = ram->nodosLibres->first;
+		
 
-	//añadir búsqueda de bloques libres(practica)
+		for (int i = 0; i < ram->nodosLibres->size; i++)
+		{
+			
+			if (nodoAux->size >= size )
+			{
+				if (nodoMover == NULL) 
+				{
+					nodoMover = nodoAux;
+				}
+				if (nodoAux->size < nodoMover->size && nodoAux->size > size)
+				{
+					nodoMover = nodoAux;
+				}
+					
+			}
+			nodoAux = nodoAux->next;
+		}
 
+	}
+	//cambiamos el nodo de lista libre a ocupado
+	if(nodoMover != NULL)
+	{
+		removeNode(ram->nodosLibres, nodoMover);
+		addNode(ram->nodosOcupados, nodoMover);
+		return ram->nodosOcupados->last->ram_ptr;
+	}
+
+	//si no hay hueco devolvemos null
+	if (size > ram->free_size)
+	{
+		return NULL;
+	}
+
+	//si hay hueco creamos un nuevo nodo
 	addNewNode(ram, ram->nodosOcupados, size);
 	
 	return ram->nodosOcupados->last->ram_ptr;

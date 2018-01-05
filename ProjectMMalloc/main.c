@@ -7,19 +7,38 @@
 
 int main(int argc, char** argv)
 {
+	int size = sizeof(char)  *1024*100;
+	void* ptr_ram = (void*)malloc(size);
+	init_mmalloc(ptr_ram, size);
+
 	Matrix_t *m1 = NULL;
 	Matrix_t *m2 = NULL;
 	Matrix_t *mres = NULL;
 	Matrix_t *mresSimple = NULL;
 
 
-	if (0 == readMatrix("Matrix1.bin", &m1, 0))
+	//int * array = mmalloc(sizeof(int) * 10);
+	//printf("0x%x\n", array);
+	//mfree(array);
+	//int * array1 = mmalloc(sizeof(int) * 10);
+	//printf("0x%x\n", array1);
+	//mfree(array1);
+
+	if (0 == readMatrix("4x101.bin", &m1, 0))
 	{
 		printf("First Matrix unreadable. Try again. \n");
 	}
-	else if (0 == readMatrix("Matrix2.bin", &m2, 1))
+	else if (2 == readMatrix("4x101.bin", &m1, 0))
+	{
+		printf("Not enough space for first matrix.\n");
+	}
+	else if (0 == readMatrix("10x41.bin", &m2, 1))
 	{
 		printf("Second Matrix unreadable. Try again. \n");
+	}
+	else if (2 == readMatrix("10x41.bin", &m2, 1))
+	{
+		printf("Not enough space for second matrix.\n");
 	}
 	else
 	{
@@ -34,7 +53,17 @@ int main(int argc, char** argv)
 		else
 		{
 			createAndFillMatrix(&mres, m1->rowNum, m1->rowNum, 0);
+			if (mres == NULL)
+			{
+				printf("Not enough space. \n");
+				return 0;
+			}
 			createAndFillMatrix(&mresSimple, m1->rowNum, m1->rowNum, 0);
+			if (mresSimple == NULL)
+			{
+				printf("Not enough space. \n");
+				return 0;
+			}
 			multiplyMatrix(m1, m2, mres);
 			multiplyMatrixSimple(m1, m2, mresSimple);
 			if (mres->colNum <= 4 && mres->rowNum <= 4)
@@ -52,10 +81,10 @@ int main(int argc, char** argv)
 			if (martrixComparator(mres, mresSimple)) printf("The matrix match. \n");
 			else printf("Matrix doesn't match. \n");
 			writeMatrix("result.bin", mres, 0);
-			free(m1);
-			free(m2);
-			free(mres);
-			free(mresSimple);
+			mfree(m1);
+			mfree(m2);
+			mfree(mres);
+			mfree(mresSimple);
 		}
 	}
 
@@ -85,7 +114,7 @@ int main(int argc, char** argv)
 
 
 
-
+	getchar();
 
 	/*
 	init_mmalloc(

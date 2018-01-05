@@ -3,7 +3,7 @@
 	-Alberto Soutullo Rendo
 	3º IDCD UTAD
 */
-
+/*
 #include "stdafx.h"
 #include "MatrixUtilities.h"
 #include "Operations.h"
@@ -138,3 +138,4 @@ int main()
 
     return 0;
 }
+*/
